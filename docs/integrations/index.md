@@ -41,7 +41,7 @@ graph LR
 | VictorOps | Notification | Incident alerting via VictorOps/Splunk On-Call |
 | MCP Server | AI/Automation | Read-only API for AI tools and automation |
 
-## MCP Server (Model Context Protocol)
+## MCP Server (Model Context Protocol) {#mcp-server}
 
 The Arguz MCP Server provides a **read-only** API endpoint that enables AI tools and automation to query your deployment data programmatically.
 

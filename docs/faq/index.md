@@ -103,7 +103,7 @@ Data storage location is configurable per organization. Arguz supports GCS, Azur
 
 ---
 
-## Troubleshooting
+## Troubleshooting {#troubleshooting}
 
 ### Agent pods are not starting
 

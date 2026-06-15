@@ -52,7 +52,6 @@ plugins:
   - search:
       lang: en
   - tags
-  - social
   - minify:
       minify_html: true
 
