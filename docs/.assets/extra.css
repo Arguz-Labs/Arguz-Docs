@@ -1,0 +1,90 @@
+/* ── Arguz brand colors ── */
+:root {
+  --md-primary-fg-color:        #6366f1;
+  --md-primary-fg-color--light: #818cf8;
+  --md-primary-fg-color--dark:  #4f46e5;
+  --md-accent-fg-color:         #818cf8;
+}
+
+/* ── Dark mode: slate-based palette matching Arguz-Front ── */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:        #6366f1;
+  --md-primary-fg-color--light: #818cf8;
+  --md-primary-fg-color--dark:  #4f46e5;
+  --md-accent-fg-color:         #a78bfa;
+
+  --md-default-bg-color:        #0f1117;
+  --md-default-bg-color--light: #1e293b;
+  --md-default-bg-color--lighter: #1e293b;
+  --md-default-bg-color--lightest: #334155;
+
+  --md-code-bg-color:           #1a1f2e;
+  --md-code-fg-color:           #e2e8f0;
+
+  --md-typeset-color:           #cbd5e1;
+  --md-typeset-a-color:         #818cf8;
+
+  --md-footer-bg-color:         #0a0e15;
+  --md-footer-bg-color--dark:   #0a0e15;
+}
+
+/* ── Header & tabs in dark mode ── */
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: rgba(15, 17, 23, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-md-color-scheme="slate"] .md-header--shadow {
+  box-shadow: 0 0 0.2rem rgba(0,0,0,0.1), 0 0.2rem 0.4rem rgba(0,0,0,0.2);
+}
+
+/* ── Navigation in dark mode ── */
+[data-md-color-scheme="slate"] .md-nav--primary .md-nav__title {
+  background-color: #0f1117;
+}
+
+/* ── Sidebar emerald accent line on active page ── */
+[data-md-color-scheme="slate"] .md-nav__item--active > .md-nav__link {
+  border-left: 2px solid #10b981;
+}
+
+/* ── Smooth font ── */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Admonitions: emerald success, indigo info ── */
+[data-md-color-scheme="slate"] .md-typeset .admonition.success,
+[data-md-color-scheme="slate"] .md-typeset details.success {
+  border-color: #10b981;
+}
+[data-md-color-scheme="slate"] .md-typeset .success > .admonition-title,
+[data-md-color-scheme="slate"] .md-typeset .success > summary {
+  background-color: rgba(16, 185, 129, 0.15);
+}
+[data-md-color-scheme="slate"] .md-typeset .success > .admonition-title::before,
+[data-md-color-scheme="slate"] .md-typeset .success > summary::before {
+  background-color: #34d399;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .admonition.info,
+[data-md-color-scheme="slate"] .md-typeset details.info {
+  border-color: #6366f1;
+}
+[data-md-color-scheme="slate"] .md-typeset .info > .admonition-title,
+[data-md-color-scheme="slate"] .md-typeset .info > summary {
+  background-color: rgba(99, 102, 241, 0.15);
+}
+
+/* ── Table styling ── */
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) {
+  background-color: rgba(30, 41, 59, 0.4);
+  border-color: rgba(51, 65, 85, 0.6);
+}
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+  background-color: rgba(30, 41, 59, 0.8);
+  color: #e2e8f0;
+}

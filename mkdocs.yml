@@ -12,18 +12,21 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
+      primary: custom
       accent: indigo
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: indigo
-      accent: light blue
+      primary: custom
+      accent: indigo
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
   features:
     - navigation.instant
     - navigation.instant.progress
@@ -45,7 +48,7 @@ theme:
     - toc.integrate
   icon:
     repo: fontawesome/brands/github
-  logo: .assets/logo.svg
+  logo: .assets/logo.png
   favicon: .assets/favicon.svg
 
 plugins:
@@ -92,6 +95,9 @@ extra:
       link: https://github.com/Arguz-Labs
   version:
     provider: mike
+
+extra_css:
+  - .assets/extra.css
 
 copyright: Copyright &copy; 2026 Arguz Labs
 
