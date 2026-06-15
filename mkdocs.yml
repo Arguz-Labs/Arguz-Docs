@@ -48,8 +48,8 @@ theme:
     - toc.integrate
   icon:
     repo: fontawesome/brands/github
-  logo: .assets/logo.png
-  favicon: .assets/favicon.svg
+  logo: assets/logo.png
+  favicon: assets/favicon.svg
 
 plugins:
   - search:
@@ -97,7 +97,7 @@ extra:
     provider: mike
 
 extra_css:
-  - .assets/extra.css
+  - assets/extra.css
 
 copyright: Copyright &copy; 2026 Arguz Labs
 
