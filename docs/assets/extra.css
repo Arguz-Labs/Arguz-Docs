@@ -7,3 +7,9 @@
   --md-accent-fg-color:         #a855d6;
   --md-default-bg-color:        #ffffff;
 }
+
+/* ── Larger logo ── */
+.md-header__button.md-logo img,
+.md-nav__button.md-logo img {
+  height: 2.4rem;
+}
