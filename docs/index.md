@@ -2,12 +2,12 @@
 
 <div class="arguz-hero">
   <div class="arguz-grid arguz-grid--two">
-    <a class="arguz-card arguz-link-card" href="getting-started/index.md">
+    <a class="arguz-card arguz-link-card" href="getting-started/">
       <h3>English</h3>
       <p>Product overview, installation, CronJobs, node inventory, policies, notifications and operational automation.</p>
       <p><strong>Start here:</strong> Getting Started</p>
     </a>
-    <a class="arguz-card arguz-link-card" href="es/index.md">
+    <a class="arguz-card arguz-link-card" href="es/">
       <h3>Español</h3>
       <p>Resumen del producto, instalación, CronJobs, inventario de nodos, políticas, notificaciones y automatización operativa.</p>
       <p><strong>Comienza aquí:</strong> Inicio</p>
