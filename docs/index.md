@@ -1,65 +1,68 @@
 # Arguz Documentation
 
-Welcome to the official Arguz documentation. Arguz is a **Kubernetes Deployment Governance and Observability Platform** that provides real-time visibility into your production deployments, helps you understand the impact of every change, and accelerates incident resolution with AI-powered root cause analysis.
+<div class="arguz-hero">
+  <div class="arguz-grid arguz-grid--two">
+    <a class="arguz-card arguz-link-card" href="getting-started/index.md">
+      <h3>English</h3>
+      <p>Product overview, installation, CronJobs, node inventory, policies, notifications and operational automation.</p>
+      <p><strong>Start here:</strong> Getting Started</p>
+    </a>
+    <a class="arguz-card arguz-link-card" href="es/index.md">
+      <h3>Español</h3>
+      <p>Resumen del producto, instalación, CronJobs, inventario de nodos, políticas, notificaciones y automatización operativa.</p>
+      <p><strong>Comienza aquí:</strong> Inicio</p>
+    </a>
+  </div>
+</div>
 
-## What Arguz Does
+Arguz is a Kubernetes operations platform focused on **change intelligence, cluster inventory, runtime governance and response workflows**. It connects your clusters, deployment history and operational policies into a single interface for engineering, SRE and platform teams.
 
-Arguz connects your Kubernetes clusters, Git repositories, and CI/CD pipelines into a unified observability and governance layer. It gives platform engineers, SRE teams, and developers a shared source of truth for:
+## What's covered in this edition
 
-- **Deployment Tracking** — Know exactly what was deployed, when, and by whom across all your clusters.
-- **Change Impact Analysis** — Understand how every deployment affects service health, error rates, and latency.
-- **Service 360 Observability** — Get a complete picture of each service: logs, metrics, events, dependencies, and error patterns.
-- **Incident Response** — Detect errors, trace them to specific deployments, and get AI-powered root cause analysis.
-- **Governance & Policies** — Enforce change freezes, alert policies, and scaling rules across your organization.
-- **Multi-Cluster Visibility** — Manage multiple Kubernetes clusters from a single pane of glass.
+<div class="arguz-chip-list">
+  <span class="arguz-chip">Overview dashboard</span>
+  <span class="arguz-chip">Clusters and nodes</span>
+  <span class="arguz-chip">Images and revisions</span>
+  <span class="arguz-chip">CronJobs and executions</span>
+  <span class="arguz-chip">Alert policies</span>
+  <span class="arguz-chip">Event notifications</span>
+  <span class="arguz-chip">Scaling rules</span>
+</div>
 
-## Who Is This For?
+## Platform summary
 
-- **Platform Engineers** — Govern deployments across your organization's Kubernetes footprint.
-- **SRE Teams** — Reduce MTTR with deployment-aware observability and automated RCA.
-- **DevOps Engineers** — Integrate deployment tracking into existing CI/CD workflows.
-- **Development Teams** — Self-service visibility into how your changes behave in production.
-- **Operations Teams** — Alert on deployment anomalies and service degradation.
+<div class="arguz-grid arguz-grid--two">
+  <div class="arguz-card">
+    <h3 class="arguz-section-title">Control changes with context</h3>
+    <p>Track revisions, images, Helm releases, namespaces, cloud metadata and rollout health without leaving the Arguz dashboards.</p>
+  </div>
+  <div class="arguz-card">
+    <h3 class="arguz-section-title">Operate across clusters</h3>
+    <p>Use node snapshots, cluster inventory, provider links, CronJob execution history and scaling rule audit trails across GKE, EKS, AKS and on-prem clusters.</p>
+  </div>
+  <div class="arguz-card">
+    <h3 class="arguz-section-title">Automate the response layer</h3>
+    <p>Route alerts, define event notifications, silence policies, apply temporary scaling templates and automatically revert them when rules expire or are disabled.</p>
+  </div>
+  <div class="arguz-card">
+    <h3 class="arguz-section-title">Keep the docs bilingual</h3>
+    <p>The published navigation now ships in English and Spanish, with the same core sections and updated wording for the current product surface.</p>
+  </div>
+</div>
 
-## Key Concepts
+## Quick links
 
-| Concept | Description |
+| Audience | Best starting point |
 |---|---|
-| **Organization** | Your company or team account in Arguz. Contains projects, clusters, and users. |
-| **Project** | A logical grouping of clusters and namespaces (e.g., "payments", "frontend"). |
-| **Cluster** | A Kubernetes cluster registered with Arguz. Runs the Arguz Agent. |
-| **Deployment** | A Kubernetes Deployment tracked by Arguz across revisions. |
-| **Revision** | A specific version of a deployment — captured when a change is detected. |
-| **Agent** | A lightweight component installed in your Kubernetes cluster that collects metadata and observability data. |
+| New workspace setup | [Installation](getting-started/installation.md) |
+| Cluster onboarding | [Clusters & Nodes](clusters/index.md) |
+| Agent operators | [Arguz Agent](agent/index.md) |
+| CronJob visibility | [Workloads, Services & CronJobs](workloads/index.md) |
+| Alerts and channels | [Notifications](notifications/index.md) |
+| Governance and scaling | [Policies & Governance](policies/index.md) |
 
-## Quick Navigation
+## Notes
 
-| Section | For |
-|---|---|
-| [Getting Started](getting-started/index.md) | New users — install, configure, and explore |
-| [Arguz Agent](agent/index.md) | Understanding the agent: data, security, and limitations |
-| [Deployments](deployments/index.md) | Tracking and managing deployments |
-| [Clusters](clusters/index.md) | Managing Kubernetes clusters |
-| [Workloads & Services](workloads/index.md) | Service observability and dependency mapping |
-| [Revisions](revisions/index.md) | Deployment revision history |
-| [Incidents & Errors](incidents/index.md) | Error detection and incident management |
-| [Root Cause Analysis](rca/index.md) | AI-powered RCA |
-| [Notifications](notifications/index.md) | Slack, Teams, VictorOps alerts |
-| [Policies](policies/index.md) | Alert policies, scaling rules, freeze windows |
-| [Integrations](integrations/index.md) | GitHub, ArgoCD, authentication |
-| [FAQ](faq/index.md) | Frequently asked questions |
-| [Glossary](glossary.md) | Terminology reference |
-
-## Platform at a Glance
-
-```mermaid
-graph LR
-    A[Your Kubernetes Clusters] -->|Agent| B[Arguz Platform]
-    C[GitHub / ArgoCD] -->|Webhooks| B
-    B -->|Alerts| D[Slack / Teams / VictorOps]
-    B -->|Query| E[Arguz Dashboard]
-    B -->|Read-Only API| F[AI Tools / MCP]
-    E -->|SSO| G[Google Identity]
-```
-
-Arguz is delivered as a SaaS platform. You install the **Arguz Agent** in your Kubernetes clusters, and all observability data, deployment tracking, and governance features are available through the Arguz web application at [app.arguz.io](https://app.arguz.io).
+<div class="arguz-note">
+  <p><strong>Temporary documentation scope:</strong> telemetry-collector specifics were intentionally removed from this version while the public docs are aligned with the currently documented Arguz agent bundle.</p>
+</div>

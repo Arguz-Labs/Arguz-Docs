@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
 site_name: Arguz Documentation
-site_description: Kubernetes Deployment Governance & Observability Platform
+site_description: Kubernetes change intelligence, cluster inventory and operational automation platform
 site_author: Arguz Labs
 site_url: https://docs.arguz.io
 repo_name: Arguz-Labs/Arguz-Docs
@@ -23,8 +23,6 @@ theme:
     - navigation.instant
     - navigation.instant.progress
     - navigation.tracking
-    - navigation.tabs
-    - navigation.tabs.sticky
     - navigation.sections
     - navigation.expand
     - navigation.indexes
@@ -45,7 +43,9 @@ theme:
 
 plugins:
   - search:
-      lang: en
+      lang:
+        - en
+        - es
   - tags
   - minify:
       minify_html: true
@@ -95,44 +95,88 @@ copyright: Copyright &copy; 2026 Arguz Labs
 
 nav:
   - Home: index.md
-  - Getting Started:
-      - getting-started/index.md
-      - Overview: getting-started/overview.md
-      - Installation: getting-started/installation.md
-      - Quickstart: getting-started/quickstart.md
-      - Architecture: getting-started/architecture.md
-  - Arguz Agent:
-      - agent/index.md
-      - Agent Overview: agent/overview.md
-      - Data Collection: agent/data-collection.md
-      - Communication Protocols: agent/protocols.md
-      - Required Permissions: agent/permissions.md
-      - Agent Security: agent/security.md
-      - Limitations & Scope: agent/limitations.md
-  - Deployments:
-      - deployments/index.md
-  - Clusters:
-      - clusters/index.md
-  - Workloads & Services:
-      - workloads/index.md
-  - Revision History:
-      - revisions/index.md
-  - Incidents & Errors:
-      - incidents/index.md
-  - Root Cause Analysis:
-      - rca/index.md
-  - Notifications:
-      - notifications/index.md
-  - Policies & Governance:
-      - policies/index.md
-  - Integrations:
-      - integrations/index.md
-      - GitHub: integrations/github.md
-      - ArgoCD: integrations/argocd.md
-      - Google Authentication: integrations/google-auth.md
-      - Azure AD: integrations/azure-ad.md
-  - Administration:
-      - administration/index.md
-  - FAQ:
-      - faq/index.md
-  - Glossary: glossary.md
+  - English:
+      - Start Here:
+          - getting-started/index.md
+          - Product Overview: getting-started/overview.md
+          - Installation: getting-started/installation.md
+          - Quickstart: getting-started/quickstart.md
+          - Architecture: getting-started/architecture.md
+      - Agent:
+          - agent/index.md
+          - Discovery Agent Overview: agent/overview.md
+          - Data Collection: agent/data-collection.md
+          - Communication Protocols: agent/protocols.md
+          - Required Permissions: agent/permissions.md
+          - Security Model: agent/security.md
+          - Limitations & Scope: agent/limitations.md
+      - Deployments & Images:
+          - deployments/index.md
+      - Clusters & Nodes:
+          - clusters/index.md
+      - Workloads, Services & CronJobs:
+          - workloads/index.md
+      - Revisions:
+          - revisions/index.md
+      - Errors & Incidents:
+          - incidents/index.md
+      - Root Cause Analysis:
+          - rca/index.md
+      - Notifications:
+          - notifications/index.md
+      - Policies & Governance:
+          - policies/index.md
+      - Integrations:
+          - integrations/index.md
+          - GitHub: integrations/github.md
+          - ArgoCD: integrations/argocd.md
+          - Google Authentication: integrations/google-auth.md
+          - Azure AD: integrations/azure-ad.md
+      - Administration:
+          - administration/index.md
+      - FAQ:
+          - faq/index.md
+      - Glossary: glossary.md
+  - Espanol:
+      - Empezar aqui:
+          - es/index.md
+          - Inicio: es/getting-started/index.md
+          - Resumen del producto: es/getting-started/overview.md
+          - Instalacion: es/getting-started/installation.md
+          - Primer recorrido: es/getting-started/quickstart.md
+          - Arquitectura: es/getting-started/architecture.md
+      - Agente:
+          - es/agent/index.md
+          - Resumen del Discovery Agent: es/agent/overview.md
+          - Recoleccion de datos: es/agent/data-collection.md
+          - Protocolos de comunicacion: es/agent/protocols.md
+          - Permisos requeridos: es/agent/permissions.md
+          - Modelo de seguridad: es/agent/security.md
+          - Limites y alcance: es/agent/limitations.md
+      - Deployments e imagenes:
+          - es/deployments/index.md
+      - Clusters y nodos:
+          - es/clusters/index.md
+      - Workloads, servicios y CronJobs:
+          - es/workloads/index.md
+      - Revisiones:
+          - es/revisions/index.md
+      - Errores e incidentes:
+          - es/incidents/index.md
+      - Analisis de causa raiz:
+          - es/rca/index.md
+      - Notificaciones:
+          - es/notifications/index.md
+      - Politicas y gobernanza:
+          - es/policies/index.md
+      - Integraciones:
+          - es/integrations/index.md
+          - GitHub: es/integrations/github.md
+          - ArgoCD: es/integrations/argocd.md
+          - Autenticacion con Google: es/integrations/google-auth.md
+          - Azure AD: es/integrations/azure-ad.md
+      - Administracion:
+          - es/administration/index.md
+      - FAQ:
+          - es/faq/index.md
+      - Glosario: es/glossary.md

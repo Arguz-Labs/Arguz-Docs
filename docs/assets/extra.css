@@ -1,15 +1,101 @@
-/* ── Arguz Docs custom styles ── */
+/* Arguz Docs custom styles */
 
 :root {
-  --md-primary-fg-color:        #8c38b6;
+  --md-primary-fg-color: #8c38b6;
   --md-primary-fg-color--light: #a855d6;
-  --md-primary-fg-color--dark:  #722a96;
-  --md-accent-fg-color:         #a855d6;
-  --md-default-bg-color:        #ffffff;
+  --md-primary-fg-color--dark: #722a96;
+  --md-accent-fg-color: #a855d6;
+  --md-default-bg-color: #ffffff;
+  --arguz-surface: #f6f1fb;
+  --arguz-border: rgba(140, 56, 182, 0.14);
+  --arguz-shadow: 0 18px 48px rgba(91, 29, 119, 0.08);
 }
 
-/* ── Larger logo ── */
 .md-header__button.md-logo img,
-.md-nav__button.md-logo img {
+.md-header__button.md-logo svg {
   height: 2.4rem;
+}
+
+.arguz-hero {
+  padding: 1.25rem 0 0.25rem;
+}
+
+.arguz-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.arguz-grid--two {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.arguz-card {
+  background: linear-gradient(180deg, rgba(250, 245, 255, 0.95), #fff);
+  border: 1px solid var(--arguz-border);
+  border-radius: 1rem;
+  box-shadow: var(--arguz-shadow);
+  padding: 1.1rem 1.15rem;
+}
+
+.arguz-card h3,
+.arguz-card h4 {
+  margin-top: 0;
+}
+
+.arguz-card p:last-child,
+.arguz-card ul:last-child {
+  margin-bottom: 0;
+}
+
+.arguz-link-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.arguz-link-card:hover {
+  border-color: rgba(140, 56, 182, 0.28);
+  transform: translateY(-1px);
+}
+
+.arguz-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 1rem 0 0;
+}
+
+.arguz-chip {
+  background: rgba(140, 56, 182, 0.08);
+  border: 1px solid rgba(140, 56, 182, 0.15);
+  border-radius: 999px;
+  color: #6f2a96;
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.4rem 0.75rem;
+  text-transform: uppercase;
+}
+
+.arguz-note {
+  background: var(--arguz-surface);
+  border-left: 4px solid var(--md-primary-fg-color);
+  border-radius: 0.9rem;
+  padding: 1rem 1rem 1rem 1.15rem;
+}
+
+.arguz-section-title {
+  margin-bottom: 0.35rem;
+}
+
+.arguz-compact-table table td,
+.arguz-compact-table table th {
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .arguz-hero {
+    padding-top: 0.4rem;
+  }
 }

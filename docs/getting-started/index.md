@@ -1,19 +1,33 @@
 # Getting Started
 
-New to Arguz? This section will guide you through understanding the platform, installing the agent, and getting visibility into your first cluster.
+This section is the fastest path to a usable Arguz workspace. It covers cluster onboarding, Helm installation, the first dashboards to open, and how the current product surface is organized.
 
-## In This Section
+## Recommended reading order
 
-- **[Overview](overview.md)** — What Arguz is, key features, and core concepts
-- **[Installation](installation.md)** — How to install the Arguz Agent in your Kubernetes clusters
-- **[Quickstart](quickstart.md)** — Step-by-step walkthrough from sign-up to first deployment tracking
-- **[Architecture](architecture.md)** — High-level platform architecture
+1. [Product Overview](overview.md)
+2. [Installation](installation.md)
+3. [Quickstart](quickstart.md)
+4. [Architecture](architecture.md)
 
-## Prerequisites
+## What you will have after setup
 
-Before you begin, you will need:
+- A project and cluster registered from the Admin Console
+- The `arguz-agent` Helm chart installed with the shared credentials secret
+- Discovery Agent heartbeats reporting cluster, namespace, deployment, CronJob and node inventory
+- Optional Scaling Rules Agent enabled from the same chart
+- Access to the main Arguz views for overview metrics, errors, revisions, clusters, nodes, images and CronJobs
 
-- Access to a Kubernetes cluster (v1.24+)
-- Helm 3 installed locally
-- `kubectl` configured to access your cluster
-- A Google account for authentication (or email/password via Google Identity Platform)
+## Current product areas
+
+| Area | What it gives you |
+|---|---|
+| Overview dashboard | Executive view of revisions, images, clusters, CronJobs and failure signals |
+| Clusters | Connectivity, cloud metadata, provider deep links and namespace inventory |
+| Nodes | Capacity and allocatable snapshots, conditions and cluster topology |
+| Deployments | Rollout history, images, Helm context and linked incidents |
+| CronJobs | Human-readable schedules, live executions and failed-job logs |
+| Policies | Alert policies, event notifications, silences and scaling rule governance |
+
+## Need Spanish?
+
+The complete Spanish mirror is available under [Espanol](../es/index.md).

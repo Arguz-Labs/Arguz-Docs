@@ -1,35 +1,50 @@
 # Arguz Agent
 
-The Arguz Agent is the component you install in your Kubernetes clusters to connect them to the Arguz platform. This section covers everything you need to know about the agent.
+The Arguz agent bundle is the in-cluster component set used by Arguz. Today the public Helm chart installs:
 
-## In This Section
+- **Discovery Agent**
+- **Scaling Rules Agent**
 
-- **[Agent Overview](overview.md)** — What the agent does and how it helps your workflows
-- **[Data Collection](data-collection.md)** — What data the agent captures and how
-- **[Communication Protocols](protocols.md)** — How the agent communicates with the Arguz platform
-- **[Required Permissions](permissions.md)** — Kubernetes RBAC needed by the agent
-- **[Agent Security](security.md)** — Security model, authentication, and privacy considerations
-- **[Limitations & Scope](limitations.md)** — What the agent does NOT capture or do
+These docs focus on the behavior that is currently exposed through the product and maintained in the agent chart.
 
-## Agent Types
+## Responsibilities
 
-Arguz currently provides one agent component:
+### Discovery Agent
 
-| Agent | Purpose | Installation |
-|---|---|---|
-| **Discovery Agent** | Deployment tracking, cluster metadata, HPA monitoring, node snapshots | Helm chart |
+- Detect Deployment changes and create revisions
+- Discover namespaces, services, jobs and ingress resources
+- Capture HPA configuration snapshots
+- Capture cluster cloud metadata
+- Send node inventory snapshots
+- Sync CronJob definitions and Job executions
+- Persist the last 100 log lines for failed CronJob executions
+- Send deployment metadata to the platform
 
-Additional observability agents (eBPF-based or sidecar) for capturing application-level telemetry (HTTP events, database queries, logs, metrics) are available separately.
+### Scaling Rules Agent
 
-## High-Level Flow
+- Applies temporary HPA changes from scaling templates
+- Tracks rollback state
+- Restores previous HPA values when templates expire or are disabled
+
+## High-level flow
 
 ```mermaid
 graph LR
-    subgraph "Your Cluster"
-        A[Discovery Agent] -->|Watches K8s API| B[Deployments/Pods/HPAs]
-        A -->|Sends Metadata| C[Control Plane API]
-        D[eBPF/Sidecar Agent] -->|Sends Telemetry| E[Data Ingestion API]
-    end
-    C -->|Stores| F[Arguz Platform]
-    E -->|Stores| F
+    A[Kubernetes API] -->|Watches resources| B[Discovery Agent]
+    B -->|Metadata, nodes, CronJobs| C[Control Plane API]
+    G[Scaling Rules Agent] -->|HPA reconcile| A
+    G -->|Execution state| H[Scaling Rules API]
+    C --> F[Arguz Frontend]
+    H --> F
 ```
+
+## Documentation map
+
+| Page | What you'll find |
+|---|---|
+| [Agent Overview](overview.md) | Lifecycle, heartbeats, leader election and inventory loops |
+| [Data Collection](data-collection.md) | Detailed list of cluster, node, CronJob and revision data |
+| [Communication Protocols](protocols.md) | Endpoints, auth model and sync patterns |
+| [Required Permissions](permissions.md) | Kubernetes RBAC required to run the agents |
+| [Security Model](security.md) | Token handling, manifest sanitization and scope boundaries |
+| [Limitations & Scope](limitations.md) | Best-effort metadata and what the agents do not measure |
