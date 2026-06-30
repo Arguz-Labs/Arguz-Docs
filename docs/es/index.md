@@ -113,7 +113,9 @@ flowchart LR
 Arguz combina membresia base con roles finos:
 
 - `organization.owner` tiene control total de la organizacion.
-- Las membresias base son `guest`, `view`, `editor` y `admin`.
+- Las membresias base son `viewer`, `editor` y `admin`.
+- `viewer` es el rol minimo y sigue minimo privilegio por defecto.
+- Por defecto `viewer` puede listar organizaciones y depende de permisos asignados por un admin para obtener acceso adicional.
 - Los roles directos a usuario pueden agregar permisos especificos por funcionalidad.
 - Los roles heredados por grupo permiten compartir acceso sin editar usuario por usuario.
 - Algunas pantallas ademas exigen permisos puntuales como ver revisiones, revisar RCA, editar politicas o administrar clusters.

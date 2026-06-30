@@ -129,8 +129,7 @@ The organization users page shows the full access composition of a person:
 
 Arguz supports the following organization membership roles:
 
-- `guest`
-- `view`
+- `viewer`
 - `editor`
 - `admin`
 
@@ -138,8 +137,10 @@ These are baseline relationships, not the entire authorization model.
 
 ### What membership means operationally
 
-- `guest` is limited read-only access
-- `view` is general view access
+- `viewer` is the minimum membership role
+- `viewer` follows least-privilege by default
+- `viewer` can list organizations by default
+- `viewer` only gains additional access when an admin assigns direct or group-based permissions
 - `editor` can manage editable organization resources
 - `admin` can manage organization-wide resources
 - `organization.owner` is separate and has full control
@@ -180,7 +181,7 @@ Direct and group roles can represent feature-specific permissions such as:
 - event notification policy management
 - cluster and project administration
 
-In other words, a user may have baseline `view` membership but still gain additional capabilities from direct or inherited roles.
+In other words, a user may have baseline `viewer` membership and still gain additional capabilities only through direct or inherited roles granted by an administrator.
 
 ## Notification channels
 

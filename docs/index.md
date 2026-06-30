@@ -113,7 +113,9 @@ flowchart LR
 Arguz combines baseline membership with fine-grained roles:
 
 - `organization.owner` has full control of the organization.
-- Membership roles are `guest`, `view`, `editor` and `admin`.
+- Membership roles are `viewer`, `editor` and `admin`.
+- `viewer` is the minimum role and follows least-privilege by default.
+- By default, `viewer` can list organizations and depends on administrator-granted permissions for additional access.
 - Direct user roles can grant feature-specific permissions.
 - Group roles let teams inherit the same permissions without editing users one by one.
 - Some screens also enforce feature permissions such as revision viewing, error RCA, policy editing or cluster administration.

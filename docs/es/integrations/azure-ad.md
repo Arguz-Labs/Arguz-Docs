@@ -50,7 +50,7 @@ flowchart LR
     D[El usuario inicia sesion con Microsoft]
     E[Arguz asegura que exista el usuario backend]
     F[Se define la organizacion por defecto]
-    G[Se asegura membership view]
+    G[Se asegura membership viewer]
 
     A --> B --> C --> D --> E --> F --> G
 ```
@@ -61,11 +61,13 @@ Cuando el login pertenece a una organizacion valida con Azure habilitado, Arguz:
 
 - crea o reutiliza el usuario backend
 - ajusta la organizacion por defecto de ese usuario si hace falta
-- asegura al menos una membership `view` dentro de la organizacion
+- asegura al menos una membership `viewer` dentro de la organizacion
 
 Esta es una regla operativa importante:
 
 - el login Azure AD entrega membresia base en la organizacion
+- esa membresia base es `viewer` y sigue minimo privilegio por defecto
+- por defecto eso significa que el usuario puede listar organizaciones y solo expande acceso con permisos asignados por un admin
 - no convierte automaticamente al usuario en admin, editor u owner
 - los privilegios superiores siguen otorgandose por cambios de membership, roles directos o grupos
 
@@ -94,7 +96,7 @@ Esto es especialmente util cuando los usuarios no comienzan desde el link con sl
 3. Habilita Azure AD y completa tenant, client y secret.
 4. Prueba la URL de login con slug.
 5. Comparte esa URL con los usuarios finales.
-6. Despues del primer ingreso, revisa si el usuario necesita solo `view` o permisos adicionales.
+6. Despues del primer ingreso, revisa si el usuario necesita solo `viewer` o permisos adicionales.
 
 ## Expectativas comunes
 

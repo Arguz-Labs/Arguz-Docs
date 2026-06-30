@@ -50,7 +50,7 @@ flowchart LR
     D[User signs in with Microsoft]
     E[Arguz ensures backend user exists]
     F[Default organization is set]
-    G[View membership is ensured]
+    G[Viewer membership is ensured]
 
     A --> B --> C --> D --> E --> F --> G
 ```
@@ -61,11 +61,13 @@ When the sign-in belongs to a valid Azure-enabled organization, Arguz:
 
 - creates or reuses the backend user record
 - sets the default organization for that user when needed
-- ensures the user has at least `view` membership in the organization
+- ensures the user has at least `viewer` membership in the organization
 
-This is an important operating rule:
+ This is an important operating rule:
 
 - Azure AD sign-in gives the user a baseline organization membership
+- that baseline is `viewer`, which follows least-privilege by default
+- by default that means the user can list organizations and only expands from admin-granted permissions
 - it does not automatically make the user an admin, editor or owner
 - higher privileges still need to be granted through organization membership changes, direct roles or groups
 
@@ -94,7 +96,7 @@ This is especially useful when users do not start from the shared slug link.
 3. Enable Azure AD and complete tenant, client and secret fields.
 4. Test the slug-based login URL.
 5. Share that URL with end users.
-6. After first sign-in, review whether the user needs only `view` access or additional roles.
+6. After first sign-in, review whether the user needs only `viewer` access or additional roles.
 
 ## Common expectations
 

@@ -129,8 +129,7 @@ La pagina de usuarios de la organizacion muestra la composicion completa del acc
 
 Arguz soporta las siguientes membresias base:
 
-- `guest`
-- `view`
+- `viewer`
 - `editor`
 - `admin`
 
@@ -138,8 +137,10 @@ Estas membresias son la relacion base, no todo el modelo de autorizacion.
 
 ### Que significa cada membresia operativamente
 
-- `guest` es acceso limitado de solo lectura
-- `view` es acceso general de lectura
+- `viewer` es la membresia minima
+- `viewer` sigue principio de minimo privilegio por defecto
+- `viewer` solo puede listar organizaciones por defecto
+- `viewer` solo gana acceso adicional cuando un admin asigna permisos directos o heredados por grupo
 - `editor` puede gestionar recursos editables de la organizacion
 - `admin` puede gestionar recursos organizacionales
 - `organization.owner` es separado y tiene control total
@@ -180,7 +181,7 @@ Los roles directos y heredados pueden representar permisos de funcionalidad como
 - administracion de event notification policies
 - administracion de clusters y proyectos
 
-En otras palabras, un usuario puede tener membresia `view` como base y aun asi sumar capacidades extra por roles directos o heredados.
+En otras palabras, un usuario puede tener membresia base `viewer` y solo sumar capacidades extra por roles directos o heredados asignados por un administrador.
 
 ## Canales de notificacion
 
