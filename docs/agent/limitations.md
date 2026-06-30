@@ -1,24 +1,28 @@
 # Limitations & Scope
 
-This section describes the intentional boundaries of the current Arguz agent bundle.
+This page documents the intentional boundaries of the current public agent bundle.
 
 ## Discovery Agent limits
 
-- node snapshots are not live runtime usage like `kubectl top`
-- cloud metadata detection is best effort and depends on metadata or node labels being available
-- CronJob execution history depends on Jobs being visible and not filtered out
-- failed execution logs are stored as the last 100 lines, not full pod log archives
-- excluded namespaces and resources are fully ignored by discovery
+- Node pages show capacity and allocatable snapshots, not live usage sampling.
+- Provider detection is best effort and depends on cloud metadata access or useful node labels.
+- CronJob execution history depends on child Jobs remaining visible and not being excluded by filters.
+- Failed execution logs are stored only as a tail of up to 200 lines, not as full pod log archives.
+- Namespaces and resources excluded through ignore rules are completely omitted from discovery and related history.
+- Discovery helps explain runtime state in Arguz, but it is not a full observability pipeline or a replacement for dedicated metrics, traces or long-term log retention tools.
 
 ## Scaling Rules Agent limits
 
-- only rules targeting supported HPA-backed workloads can be applied
-- rollback depends on the previously stored HPA baseline
-- external HPA changes made outside the rule window may alter the rollback target if they happen after the baseline is captured
+- The current implementation targets Deployments through HPAs.
+- Scaling windows are driven by template state from Arguz plus the agent's local time-based evaluation at reconcile time.
+- Reverts happen on the next reconcile cycle, so disablement or expiration is not instant to the millisecond.
+- If a target Deployment has no HPA, the agent may create a provisional managed HPA for the execution window.
+- Rollback quality depends on the original baseline captured before Arguz took control of the HPA.
+- External HPA or replica changes performed after that baseline is captured can affect the eventual rollback target.
+- Only one managed template ownership context can control a given HPA at a time.
 
-## What the bundle does not do
+## Bundle boundaries
 
-- it does not proxy user traffic
-- it does not store full secret values
-- it does not expose long-lived local state
-- it does not act as a cluster-wide observability pipeline configuration guide in this public documentation set
+- The bundle does not proxy end-user requests into the cluster.
+- The bundle does not create a durable local data store.
+- The public documentation explains supported behavior, not internal commercial heuristics of the wider Arguz platform.

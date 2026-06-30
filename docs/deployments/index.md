@@ -1,50 +1,146 @@
 # Deployments & Images
 
-Deployments are the backbone of Arguz change intelligence. Every rollout becomes a searchable revision enriched with image, cluster and error context.
+Deployments are the change unit that powers Arguz correlation. Every rollout can become a revision, every revision carries image context, and every image can be searched across the organization.
 
-## What Arguz stores per deployment
+This page documents the behavior behind:
 
-- deployment name and scope
-- image names and tags
+- `https://app.arguz.io/deployments`
+- `https://app.arguz.io/images`
+
+For release history and revision detail, continue with [Revision History](../revisions/index.md).
+
+## Deployment model
+
+In Arguz, a deployment sits inside the runtime hierarchy shown below:
+
+```mermaid
+flowchart TD
+    O[Organization]
+    P[Project]
+    C[Cluster]
+    N[Namespace]
+    D[Deployment]
+    R[Revision]
+    I[Images]
+
+    O --> P --> C --> N --> D --> R
+    R --> I
+```
+
+## What the `Deployments` page is for
+
+The deployments screen is the operational index for rollout-bearing workloads. It is the fastest way to answer:
+
+- which deployments exist in the selected organization scope
+- what the most recent revision looks like
+- which image set is currently associated with that deployment
+- whether an HPA snapshot exists for the latest revision
+- which cluster, namespace and project own the workload
+
+## What Arguz stores per deployment view
+
+The deployment list is enriched with data from the latest known revision:
+
+- deployment name
+- project, cluster and namespace
+- latest revision number or version marker
+- latest deployment timestamp
+- revision type when available
+- image names and tags from the latest revision
+- HPA presence and current HPA snapshot when available
+- cloud provider context and deep links when available
+
+## How rollout data reaches this page
+
+```mermaid
+flowchart LR
+    A[Deployment add or update]
+    B[Arguz agent detects revision change]
+    C[Revision stored]
+    D[Images and services attached]
+    E[Deployment list updated]
+
+    A --> B --> C --> D --> E
+```
+
+Arguz does not need a manual release note for this flow. The deployment change itself is the source event.
+
+## Revision source patterns
+
+Depending on the workload, the recorded revision may reflect:
+
+- a regular deployment rollout
+- a GitOps-driven rollout
+- a Helm-derived revision context
+
+The documentation intentionally focuses on what the operator sees:
+
+- a new revision number
 - rollout timestamps
-- revision history
-- Helm release context when available
-- linked incidents and policy outcomes
+- related images
+- associated errors if failures begin after the rollout
 
-## Main workflows
+## HPA visibility
 
-### Review a rollout
+For the latest revision of a deployment, Arguz can surface:
 
-Open a deployment to inspect:
+- whether HPA is present
+- minimum replicas
+- maximum replicas
+- captured HPA metrics and behavior context when available
+- capture timestamps for the HPA snapshot
 
-- latest revision
-- image set
-- rollout status
-- related errors
-- HPA context
+This makes the deployment page the natural entry point before using [Scaling Rules](../policies/index.md).
 
-### Search images
+## What the `Images` page is for
 
-Arguz indexes images across the organization so teams can:
+The images screen is a reverse index across the latest known workload states. It answers questions such as:
 
-- locate every deployment using a tag
-- assess blast radius for a vulnerable image
-- compare clusters running different versions
+- where is this image tag running
+- which services still use an older build
+- which registry is serving the image
+- how large is the blast radius of a vulnerable image
 
-### Validate Helm-managed workloads
+## Image fields commonly shown
 
-If the deployment comes from Helm, Arguz can show release metadata and a sanitized representation of the manifest context without hiding resource identities such as Secret names.
+- full image reference
+- short image name
+- tag
+- container name
+- deployment and service name
+- revision number
+- namespace, cluster and project
+- deployed timestamp
+- registry extracted from the image reference
 
-## Frontend views tied to deployments
+## Typical operator workflows
 
-- Overview dashboard
-- Deployments table
-- Revision history
-- Errors
-- Alert policies scoped to a deployment
+### Validate a rollout
 
-## Best practices
+1. Open `Deployments`.
+2. Filter by project, cluster, namespace or deployment.
+3. Confirm the latest revision timestamp and image set.
+4. Open the revision detail if the rollout needs deeper inspection.
 
-1. Use stable image tags for production rollouts.
-2. Review revisions after every deployment window.
-3. Pair alert policies with deployment scope when only a critical workload needs special handling.
+### Assess blast radius for an image
+
+1. Open `Images`.
+2. Search by full image, short image name or tag.
+3. Review all matching workloads across projects and clusters.
+4. Use the revision number and deployment ownership to plan remediation.
+
+### Prepare for scaling or rollback decisions
+
+1. Open the deployment row.
+2. Validate HPA context and the latest image set.
+3. Compare with revision history.
+4. Move into scaling rules or incident investigation as needed.
+
+## Relationship with services
+
+Deployments and services are related but not identical in Arguz:
+
+- the deployment page is rollout-centered
+- the service page is traffic and observability centered
+
+If your main question is "what changed", start with deployments. If your main question is "how this service behaves in traffic, logs and dependencies", continue with [Workloads, Services & CronJobs](../workloads/index.md).

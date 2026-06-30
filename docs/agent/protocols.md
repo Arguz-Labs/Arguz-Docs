@@ -1,37 +1,66 @@
 # Communication Protocols
 
-Arguz agents communicate with the platform over HTTPS using cluster-scoped credentials.
+The current Arguz agents communicate with the control plane over HTTPS using cluster-scoped credentials.
 
-## Authentication
+## Credentials and headers
 
-- header-based cluster token authentication
-- one token per registered cluster
-- token rotation supported from the Admin Console
+Both agents receive these values from the shared Kubernetes Secret created by the chart:
 
-## Main request families
+- `PROJECT_ID`
+- `CLUSTER_ID`
+- `CLUSTER_TOKEN`
 
-| Flow | Destination | Purpose |
-|---|---|---|
-| Inventory sync | `api-discover.arguz.io` | deployments, namespaces, revisions, images, CronJobs, nodes |
-| Cluster heartbeat | `api-discover.arguz.io` | cluster health and cloud metadata |
-| Scaling reconciliation | `api-scaling-rules.arguz.io` | active rules, rollback state and execution updates |
+The cluster token is sent on agent-to-platform requests through the `X-Cluster-Token` header. Some internal Discovery Agent calls also include a bearer header for compatibility, but the trust model is still cluster-scoped, not user-scoped.
 
-## Transmission model
+## Main destinations
 
-- JSON payloads
-- batched submission when possible
-- near real-time change reporting
-- retry behavior on transient failures
+| Flow | Destination | Used by | Purpose |
+|---|---|---|---|
+| Inventory sync | `api-discover.arguz.io` | Discovery Agent | namespaces, Deployments, revisions, errors, images, HPAs, CronJobs and nodes |
+| Cluster heartbeat | `api-discover.arguz.io` | Discovery Agent | cluster availability and cloud metadata |
+| Template polling | `api-scaling-rules.arguz.io` | Scaling Rules Agent | list templates for the cluster |
+| Action polling | `api-scaling-rules.arguz.io` | Scaling Rules Agent | load the actions for an active template |
+| Execution events | `api-scaling-rules.arguz.io` | Scaling Rules Agent | notify apply and revert results |
+
+## Discovery Agent request model
+
+The Discovery Agent uses two communication patterns:
+
+- **Warm-up synchronization** for namespaces, Deployments and CronJobs when the leader starts.
+- **Steady-state submissions** triggered by informers and periodic loops.
+
+High-level flow:
+
+1. Read resources from the Kubernetes API.
+2. Normalize and sanitize the payload when needed.
+3. Batch submissions where appropriate.
+4. Send the result to the Discovery API using cluster-scoped authentication.
+
+## Scaling Rules Agent request model
+
+The Scaling Rules Agent runs a fixed reconcile loop every 30 seconds:
+
+1. `GET` the templates available for the cluster.
+2. Evaluate which ones should run now.
+3. `GET` the actions for each active template.
+4. Apply cluster-side HPA changes.
+5. `POST` execution or revert events back to the Scaling Rules API.
+
+## Template evaluation protocol
+
+The platform returns the template metadata and the agent evaluates:
+
+- whether the template is enabled
+- whether the current time is still before `valid_until`
+- whether a manual execution is currently marked as `running`
+- whether the current time falls inside the scheduled execution window in the configured timezone
+
+That means the control plane owns the template definition, while the cluster-side agent owns the final "run now or not" decision for that cluster and that moment in time.
 
 ## Cloud metadata lookups
 
-Before sending cluster metadata, the Discovery Agent may call:
+Before sending cluster metadata, the Discovery Agent may query cloud metadata endpoints or derive provider context from node labels. This helps Arguz classify the cluster as GKE, EKS, AKS or an unknown or on-prem environment.
 
-- GCP metadata endpoints
-- AWS IMDS
-- Azure metadata endpoints
-- Kubernetes node labels as a fallback source
+## Browser and API boundary
 
-## Frontend access pattern
-
-The browser does not call the platform internals directly. `app.arguz.io` and `app-admin.arguz.io` proxy the requests server-side and enforce user scope there.
+Users do not call the cluster-facing APIs directly from the browser. `app.arguz.io` and `app-admin.arguz.io` sit behind server-side application boundaries and enforce user scope there, while the agents authenticate as clusters.

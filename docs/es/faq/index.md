@@ -10,7 +10,7 @@ No. La pagina Nodes muestra snapshots de inventario basados en capacidad y asign
 
 ## Arguz puede mostrar fallas de CronJobs?
 
-Si. Arguz rastrea CronJobs, ejecuciones de Jobs y guarda las ultimas 100 lineas de logs de ejecuciones fallidas.
+Si. Arguz rastrea CronJobs, ejecuciones de Jobs y guarda hasta las ultimas 200 lineas de logs de ejecuciones fallidas.
 
 ## Que pasa si se deshabilita una scaling rule?
 

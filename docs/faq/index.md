@@ -10,7 +10,7 @@ No. The Nodes page shows inventory snapshots based on capacity and allocatable v
 
 ## Can Arguz show CronJob failures?
 
-Yes. Arguz tracks CronJobs, Job executions and stores the last 100 log lines for failed runs.
+Yes. Arguz tracks CronJobs, Job executions and stores up to the last 200 log lines for failed runs.
 
 ## What happens when a scaling rule is disabled?
 

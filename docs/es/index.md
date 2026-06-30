@@ -1,27 +1,135 @@
 # Documentacion de Arguz
 
-Esta es la entrada en espanol para la documentacion de Arguz. Encontraras el mismo recorrido principal que en ingles, pero adaptado a la terminologia usada en producto.
+Arguz es una plataforma de operaciones para Kubernetes centrada en cinco trabajos conectados:
 
-## Que cubre esta edicion
+- modelar la jerarquia runtime del estate
+- seguir cada rollout como una revision
+- capturar fallas runtime con contexto de cambio
+- enrutar notificaciones usando politicas reutilizables
+- gobernar acceso, clusters y canales desde una sola capa administrativa
 
-- dashboard de overview
-- clusters, namespaces y nodos
-- deployments, imagenes y revisiones
-- CronJobs y ejecuciones
-- politicas de alerta y notificaciones de evento
-- scaling rules y rollback automatico
+Esta documentacion esta escrita para que un operador pueda pasar desde el onboarding hasta la operacion diaria sin depender de conocimiento oculto del producto.
 
-## Empezar rapido
+## Entradas por idioma
 
-| Necesidad | Ir a |
+| Idioma | Punto de inicio |
 |---|---|
-| Instalar el chart | [Instalacion](getting-started/installation.md) |
-| Entender el producto | [Resumen del producto](getting-started/overview.md) |
+| Espanol | [Introduccion y recorrido](getting-started/) |
+| English | [English docs](../getting-started/) |
+
+## Jerarquia de recursos
+
+El modelo mental principal de Arguz es jerarquico. La mayoria de las pantallas, filtros y permisos siguen esta cadena:
+
+```mermaid
+flowchart TD
+    O[Organizacion]
+    P[Proyecto]
+    C[Cluster]
+    N[Namespace]
+    D[Deployment o Service]
+    R[Revision]
+    E[Error]
+    CJ[CronJob]
+
+    O --> P
+    P --> C
+    C --> N
+    N --> D
+    D --> R
+    R --> E
+    N --> CJ
+```
+
+## Que significa cada nivel
+
+- `Organizacion` es el limite de tenant para usuarios, grupos, billing, canales, politicas y SSO.
+- `Proyecto` agrupa clusters que pertenecen al mismo dominio de negocio, equipo o entorno.
+- `Cluster` es el objetivo Kubernetes registrado y conectado por el agente de Arguz.
+- `Namespace` delimita workloads dentro del cluster.
+- `Deployment` es la unidad de cambio que Arguz correlaciona con revisiones y errores.
+- `Service` es la vista orientada a trafico y observabilidad del workload.
+- `Revision` es el snapshot inmutable creado por un rollout.
+- `CronJob` es la unidad de ejecucion programada, separada del historial de revisiones.
+
+## Flujos nucleares del producto
+
+### 1. Dar de alta y descubrir
+
+```mermaid
+flowchart LR
+    A[Consola Admin]
+    B[Crear organizacion]
+    C[Crear proyecto]
+    D[Registrar cluster]
+    E[Instalar agente Arguz]
+    F[Sincronizar inventario]
+
+    A --> B --> C --> D --> E --> F
+```
+
+### 2. Seguir un rollout
+
+```mermaid
+flowchart LR
+    A[Cambio en deployment]
+    B[Se crea revision]
+    C[Se adjuntan imagenes y servicios]
+    D[Se adjunta contexto cloud y HPA]
+    E[La release queda visible]
+
+    A --> B --> C --> D --> E
+```
+
+### 3. Investigar un incidente
+
+```mermaid
+flowchart LR
+    A[Falla de pod o job]
+    B[Arguz registra error]
+    C[Error vinculado a revision y workload]
+    D[Se evaluan politicas]
+    E[Operador abre Errors o History]
+    F[Mitiga o reconoce]
+
+    A --> B --> C --> D --> E --> F
+```
+
+### 4. Notificar al canal correcto
+
+```mermaid
+flowchart LR
+    A[Canales de la organizacion]
+    B[Politica de alerta o evento]
+    C[Hace match alcance y tiempo]
+    D[Se valida ventana UTC y estado enabled]
+    E[Entrega por Slack, Teams o VictorOps]
+
+    A --> B --> C --> D --> E
+```
+
+## Modelo de acceso resumido
+
+Arguz combina membresia base con roles finos:
+
+- `organization.owner` tiene control total de la organizacion.
+- Las membresias base son `guest`, `view`, `editor` y `admin`.
+- Los roles directos a usuario pueden agregar permisos especificos por funcionalidad.
+- Los roles heredados por grupo permiten compartir acceso sin editar usuario por usuario.
+- Algunas pantallas ademas exigen permisos puntuales como ver revisiones, revisar RCA, editar politicas o administrar clusters.
+
+El modelo completo esta documentado en [Administracion](administration/index.md) y [Azure AD](integrations/azure-ad.md).
+
+## Mapa de documentacion
+
+| Necesidad | Pagina |
+|---|---|
+| Entender releases, revisiones y contexto de rollout | [Revisiones](revisions/index.md) |
+| Operar deployments e inventario de imagenes | [Deployments e imagenes](deployments/index.md) |
 | Operar clusters y nodos | [Clusters y nodos](clusters/index.md) |
-| Revisar CronJobs | [Workloads, servicios y CronJobs](workloads/index.md) |
-| Configurar notificaciones | [Notificaciones](notifications/index.md) |
-| Gobernanza y automatizacion | [Politicas y gobernanza](policies/index.md) |
-
-## Nota de alcance
-
-Las referencias a colectores de telemetria fuera del bundle actual fueron retiradas temporalmente para alinear la documentacion publica con las funciones hoy documentadas.
+| Entender servicios, CronJobs e historial de ejecuciones | [Workloads, servicios y CronJobs](workloads/index.md) |
+| Investigar fallas activas e historicas | [Errores e incidentes](incidents/index.md) |
+| Configurar canales y entender la entrega | [Notificaciones](notifications/index.md) |
+| Configurar alertas, eventos y automatizacion de scaling | [Politicas y gobernanza](policies/index.md) |
+| Gestionar organizaciones, proyectos, usuarios, grupos y clusters | [Administracion](administration/index.md) |
+| Configurar Microsoft Entra ID por organizacion | [Azure AD](integrations/azure-ad.md) |

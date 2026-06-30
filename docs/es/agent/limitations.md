@@ -1,17 +1,28 @@
 # Limites y alcance
 
-Esta seccion describe los limites intencionales del bundle actual de agentes.
+Esta pagina documenta los limites intencionales del bundle publico actual de agentes.
 
-## Discovery Agent
+## Limites del Discovery Agent
 
-- los snapshots de nodos no son uso vivo como `kubectl top`
-- la deteccion de cloud metadata es best effort
-- el historial de CronJobs depende de que Jobs y CronJobs no esten filtrados
-- los logs de falla guardan solo las ultimas 100 lineas
-- namespaces o recursos excluidos se ignoran completamente
+- La vista de Nodes muestra snapshots de capacidad y asignable, no muestreo de uso vivo.
+- La deteccion del provider es best effort y depende de acceso a metadata del cloud o de labels utiles en los nodos.
+- El historial de ejecucion de CronJobs depende de que los Jobs hijos sigan visibles y no esten excluidos por filtros.
+- Los logs de ejecuciones fallidas se guardan solo como un tail de hasta 200 lineas, no como archivos completos de logs del pod.
+- Los namespaces y recursos excluidos por reglas de ignore se omiten completamente del discovery y de la historia relacionada.
+- Discovery ayuda a explicar el estado runtime en Arguz, pero no es un pipeline completo de observabilidad ni reemplaza herramientas dedicadas de metricas, trazas o retencion larga de logs.
 
-## Scaling Rules Agent
+## Limites del Scaling Rules Agent
 
-- solo aplica sobre workloads con HPA soportado
-- el rollback depende del baseline previo almacenado
-- cambios externos al HPA luego de capturar el baseline pueden alterar el resultado esperado
+- La implementacion actual apunta a Deployments mediante HPAs.
+- Las ventanas de scaling dependen del estado del template en Arguz mas la evaluacion temporal local del agente en cada reconcile.
+- Los revert ocurren en el siguiente ciclo de reconcile, por lo que una deshabilitacion o expiracion no es instantanea al milisegundo.
+- Si el Deployment objetivo no tiene HPA, el agente puede crear un HPA provisional administrado para esa ventana de ejecucion.
+- La calidad del rollback depende del baseline original capturado antes de que Arguz tome control del HPA.
+- Cambios externos en el HPA o en replicas despues de capturar ese baseline pueden afectar el objetivo final del rollback.
+- Solo un contexto de ownership administrado puede controlar un HPA dado al mismo tiempo.
+
+## Limites del bundle
+
+- El bundle no proxya requests de usuarios finales hacia el cluster.
+- El bundle no crea un store local persistente.
+- La documentacion publica explica el comportamiento soportado, no heuristicas comerciales internas de la plataforma completa de Arguz.

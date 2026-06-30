@@ -1,46 +1,118 @@
 # Notifications
 
-Arguz separates **notification channel management** from **policy usage**.
+Arguz separates notification delivery into two layers:
+
+- organization-owned notification channels
+- policy-owned rules that decide when those channels are used
+
+This page documents the behavior behind:
+
+- `https://app.arguz.io/event-notification-policies`
+- channel management in `https://app-admin.arguz.io/admin/organizations/<organization-id>/notification-channels`
+
+Alert-specific matching is described in [Policies & Governance](../policies/index.md).
+
+## Supported channel types
+
+Arguz currently supports:
+
+- Slack
+- Microsoft Teams
+- VictorOps
 
 ## Where channels are created
 
-Notification channels are created and maintained in the **Admin Console**, then selected from:
+Channels are created in the Admin Console at the organization level. A channel belongs to one organization and can then be attached to policies in the main app.
 
-- **Alert Policies**
-- **Event Notification Policies**
+Typical channel settings are:
 
-Use the Admin Console route pattern:
+- `Slack`: incoming webhook URL and optional default channel label
+- `Microsoft Teams`: incoming webhook URL
+- `VictorOps`: webhook URL
 
-`https://app-admin.arguz.io/admin/organizations/<organization-id>/notification-channels`
+Each channel can also be globally enabled or disabled.
 
-## Supported usage in the main app
+## Delivery model
 
-Once channels exist, operators can:
+```mermaid
+flowchart LR
+    A[Admin creates channel]
+    B[Channel attached to policy]
+    C[Policy matches event or error]
+    D[Channel window checked]
+    E[Webhook delivery attempted]
+    F[Delivery state recorded]
 
-- attach them to alert policies
-- attach them to event notification policies
-- schedule active time windows
-- silence policies temporarily
+    A --> B --> C --> D --> E --> F
+```
 
-## Practical model
+## Channel windows and schedules
 
-| Step | Where it happens |
-|---|---|
-| Create channel | Admin Console |
-| Edit webhook or connector details | Admin Console |
-| Select channel for alerts | Main app |
-| Select channel for event notifications | Main app |
-| Configure channel schedules in a policy | Main app |
+Policies can define channel-specific active windows using:
 
-## What gets notified
+- active days
+- active start time in UTC
+- active end time in UTC
 
-Depending on the policy type:
+This means:
 
-- workload or rollout failures
-- deployment-related incidents
-- cluster or platform events
-- policy or automation signals
+- the same channel can be active for one policy and inactive for another
+- delivery is evaluated against UTC windows, not local browser time
+- leaving the schedule empty means the channel is always eligible for that policy
 
-## Helpful note for operators
+## Enabled state and retries
 
-If a channel dropdown is empty in the main app, first confirm that the organization already has channels configured in the Admin Console.
+Arguz checks several conditions before final delivery:
+
+- the policy must be enabled
+- the channel must be enabled
+- the policy must not be silenced for the current evaluation time
+- the channel must be inside its configured active window
+
+Operationally:
+
+- when a channel is not eligible at the current time, Arguz avoids treating it as a successful send
+- event notification sends keep a delivery state so they can be retried when applicable
+- alert notification sends also track their processing state to avoid blind duplicate behavior
+
+## Delivery states you should understand
+
+Arguz internally records delivery progress so operators can reason about what happened:
+
+- `processing` means the send is queued or in progress
+- `alerted` means the send was delivered
+- alert-related workflows can also move through states such as `resolved` or `acknowledged`
+
+The exact UI for these states may differ by screen, but the operational meaning remains the same.
+
+## What gets delivered
+
+There are two distinct notification families:
+
+- `Alert notifications` are driven by captured runtime errors and alert policy evaluation
+- `Event notifications` are driven by lifecycle events
+
+The event family currently includes at least:
+
+- `deployment.revision.created`
+
+That means Arguz can notify teams when a new revision is created even if no failure has occurred yet.
+
+## What a notification contains
+
+Depending on the channel type and policy family, the delivery payload can include:
+
+- project, cluster, namespace and service context
+- revision number
+- matched policy name
+- affected ratio for alerts
+- event path for revision-created notifications
+- links back into Arguz for RCA or review
+
+## Practical operating pattern
+
+1. Create channels once in Admin.
+2. Keep channels named by team or escalation purpose.
+3. Use policy schedules instead of duplicating channels for day and night shifts.
+4. Keep channels disabled rather than deleted when you need temporary freeze control.
+5. Validate notifications together with scope design, not as a standalone setup.

@@ -1,50 +1,62 @@
-# Arguz Agent
+# Arguz Agent Bundle
 
-The Arguz agent bundle is the in-cluster component set used by Arguz. Today the public Helm chart installs:
+The Arguz agent bundle is the supported in-cluster package used to connect a Kubernetes cluster with Arguz. The current public chart installs exactly two agents:
 
 - **Discovery Agent**
 - **Scaling Rules Agent**
 
-These docs focus on the behavior that is currently exposed through the product and maintained in the agent chart.
+Public resources:
 
-## Responsibilities
+- [Arguz Agent chart repository](https://github.com/Arguz-Labs/Arguz-Agent-Chart)
+- [Public Helm repository](https://Arguz-Labs.github.io/Arguz-Agent-Chart)
 
-### Discovery Agent
+## Current agents at a glance
 
-- Detect Deployment changes and create revisions
-- Discover namespaces, services, jobs and ingress resources
-- Capture HPA configuration snapshots
-- Capture cluster cloud metadata
-- Send node inventory snapshots
-- Sync CronJob definitions and Job executions
-- Persist the last 100 log lines for failed CronJob executions
-- Send deployment metadata to the platform
+| Agent | Primary responsibility | Reads from the cluster | Writes to the cluster | Sends to Arguz |
+|---|---|---|---|---|
+| Discovery Agent | Inventory, topology, revisions, CronJobs, node and cluster metadata | Namespaces, nodes, pods, services, ConfigMaps, Secrets, Deployments, ReplicaSets, HPAs, Jobs, CronJobs, Ingresses, NetworkPolicies, selected RBAC objects | No workload mutations. Only leader-election `Lease` updates | Inventory, revisions, errors, CronJobs, CronJob executions, node snapshots, cluster metadata |
+| Scaling Rules Agent | Temporary scaling execution through HPAs | Pods, Deployments and HPAs, plus active templates from Arguz | Creates, updates or deletes managed HPAs and may update Deployment replica counts during apply or revert | Template execution and revert events |
 
-### Scaling Rules Agent
-
-- Applies temporary HPA changes from scaling templates
-- Tracks rollback state
-- Restores previous HPA values when templates expire or are disabled
-
-## High-level flow
+## How the bundle fits into the platform
 
 ```mermaid
-graph LR
-    A[Kubernetes API] -->|Watches resources| B[Discovery Agent]
-    B -->|Metadata, nodes, CronJobs| C[Control Plane API]
-    G[Scaling Rules Agent] -->|HPA reconcile| A
-    G -->|Execution state| H[Scaling Rules API]
-    C --> F[Arguz Frontend]
-    H --> F
+graph TD
+    A[Admin Console<br/>cluster registration] --> B[PROJECT_ID / CLUSTER_ID / CLUSTER_TOKEN]
+    B --> C[Shared credentials Secret]
+    C --> D[Discovery Agent]
+    C --> E[Scaling Rules Agent]
+    F[Kubernetes API] --> D
+    F --> E
+    D --> G[Discovery API]
+    E --> H[Scaling Rules API]
+    G --> I[app.arguz.io]
+    H --> I
 ```
+
+## Lifecycle after installation
+
+1. A cluster is registered in the Admin Console and receives `PROJECT_ID`, `CLUSTER_ID` and `CLUSTER_TOKEN`.
+2. The Helm chart stores those values in a shared Kubernetes Secret and deploys both agents in the `arguz-agent` namespace.
+3. The Discovery Agent performs a warm-up sync for namespaces, Deployments and CronJobs before switching to informer-based monitoring and periodic heartbeats.
+4. The Discovery Agent keeps Arguz updated with revisions, images, HPA snapshots, CronJob execution history, node snapshots and cluster metadata.
+5. The Scaling Rules Agent reconciles every 30 seconds, fetches the templates that belong to the cluster, evaluates whether they should run now, then loads their actions.
+6. Active scaling actions are applied in `priority_up` order. If a target Deployment has no HPA, the agent can create a provisional managed HPA first.
+7. Managed HPAs are reverted in `priority_down` order when the execution window ends or when the template is disabled before its window expires.
+
+## Operational model
+
+- The public chart defaults to two Discovery Agent replicas and one Scaling Rules Agent replica.
+- Discovery uses leader election so only one replica performs write-side sync operations at a time.
+- Both agents reuse the same cluster-scoped credentials Secret.
+- The Scaling Rules Agent can be disabled if the cluster should remain inventory-only.
 
 ## Documentation map
 
-| Page | What you'll find |
+| Page | What it covers |
 |---|---|
-| [Agent Overview](overview.md) | Lifecycle, heartbeats, leader election and inventory loops |
-| [Data Collection](data-collection.md) | Detailed list of cluster, node, CronJob and revision data |
-| [Communication Protocols](protocols.md) | Endpoints, auth model and sync patterns |
-| [Required Permissions](permissions.md) | Kubernetes RBAC required to run the agents |
-| [Security Model](security.md) | Token handling, manifest sanitization and scope boundaries |
-| [Limitations & Scope](limitations.md) | Best-effort metadata and what the agents do not measure |
+| [Agent Overview](overview.md) | Runtime lifecycle of both current agents and their decision model |
+| [Data Collection](data-collection.md) | What leaves the cluster, how it is derived and what is stored as execution evidence |
+| [Communication Protocols](protocols.md) | Credentials, API flows, polling cadence and request patterns |
+| [Required Permissions](permissions.md) | RBAC scope required by each agent |
+| [Security Model](security.md) | Secret handling, sanitization, ownership boundaries and rollback safety |
+| [Limitations & Scope](limitations.md) | Intended limits, best-effort behavior and what the bundle does not do |

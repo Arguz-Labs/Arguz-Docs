@@ -10,6 +10,11 @@ The current public chart bundles both in-cluster components:
 - `Discovery-Agent`
 - `Scaling-Rules-Agent`
 
+Public resources:
+
+- [Arguz Agent chart repository](https://github.com/Arguz-Labs/Arguz-Agent-Chart)
+- [Public Helm repository](https://Arguz-Labs.github.io/Arguz-Agent-Chart)
+
 ## 1. Register the cluster
 
 From `app-admin.arguz.io`:
@@ -22,7 +27,7 @@ From `app-admin.arguz.io`:
    - `CLUSTER_ID`
    - `CLUSTER_TOKEN`
 
-These values are stored in the shared chart credentials secret.
+These values are stored in the shared chart credentials Secret.
 
 ## 2. Install the chart
 
@@ -30,7 +35,7 @@ These values are stored in the shared chart credentials secret.
 helm repo add arguz-agent https://Arguz-Labs.github.io/Arguz-Agent-Chart
 helm repo update
 helm upgrade --install arguz-agent arguz-agent/arguz-agent \
-  --version 0.4.0 \
+  --version 1.0.1 \
   -n arguz-agent \
   --create-namespace \
   --set-string global.credentialsSecretName=arguz-credentials \
@@ -65,19 +70,20 @@ Scaling-Rules-Agent:
 
 ### Discovery Agent
 
-- Sends heartbeats
-- Syncs namespaces, deployments, images and revisions
-- Captures node snapshots
-- Detects cluster cloud metadata
-- Syncs CronJobs and Job executions
-- Stores the last 100 lines of failed job logs in the platform
+- sends heartbeats
+- syncs namespaces, Deployments, images and revisions
+- captures node snapshots
+- detects cluster cloud metadata
+- syncs CronJobs and Job executions
+- stores up to the last 200 lines of failed job logs in the platform
 
 ### Scaling Rules Agent
 
-- Watches active scaling templates
-- Applies temporary HPA changes
-- Reverts them when the schedule ends
-- Reverts them again if the rule is disabled before expiration
+- polls templates every 30 seconds
+- evaluates manual and scheduled execution windows
+- applies temporary HPA changes
+- reverts them when the window ends
+- reverts them again if the template is disabled before expiration
 
 ## Verify a healthy install
 
@@ -89,7 +95,7 @@ kubectl logs deploy/arguz-agent-discovery-agent -n arguz-agent
 Look for:
 
 - leader election success
-- namespace and deployment synchronization
+- namespace and Deployment synchronization
 - node snapshot loop startup
 - cluster metadata heartbeat
 - CronJob synchronization
@@ -101,6 +107,6 @@ Arguz attempts to detect provider context from cloud metadata and Kubernetes lab
 - GKE
 - EKS
 - AKS
-- On-prem or unknown environments
+- on-prem or unknown environments
 
 If metadata endpoints are restricted, the agent falls back to node labels when possible.

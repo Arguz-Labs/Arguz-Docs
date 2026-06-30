@@ -1,41 +1,51 @@
 # Required Permissions
 
-The agent chart needs read access to cluster resources for discovery, plus HPA update permissions when the Scaling Rules Agent is enabled.
+The public chart intentionally splits permissions by agent. Discovery is mostly read-only. Scaling needs mutation rights for HPAs and some Deployment replica updates.
 
-## Discovery Agent permissions
+## Discovery Agent RBAC scope
 
-Read access is required for:
+The current chart grants the Discovery Agent:
 
-- Deployments
-- ReplicaSets
-- Pods
-- Jobs
-- CronJobs
-- HPAs
-- Namespaces
-- Services
-- Nodes
-- Ingresses
-- ConfigMaps
-- selected RBAC resources for metadata-only discovery
+- `get`, `list`, `watch` on `namespaces`
+- `get`, `list`, `watch` on `nodes`
+- `get`, `list`, `watch` on `pods` and `pods/log`
+- `get`, `list`, `watch` on `services`
+- `get`, `list`, `watch` on `configmaps`
+- `get`, `list`, `watch` on `secrets`
+- `get`, `list`, `watch` on `events`
+- `get`, `list`, `watch` on `deployments` and `replicasets`
+- `get`, `list`, `watch` on `horizontalpodautoscalers`
+- `get`, `list`, `watch` on `jobs` and `cronjobs`
+- `get`, `list`, `watch` on `ingresses` and `networkpolicies`
+- `get`, `list`, `watch` on selected RBAC objects
+- `get`, `list`, `watch`, `create`, `update`, `patch` on `leases` for leader election
 
-## Scaling Rules Agent permissions
+### Why `pods/log` access exists
 
-The Scaling Rules Agent needs to:
+The Discovery Agent reads failed Job pod logs so Arguz can attach failure context to CronJob execution history. It does not archive full cluster logs.
 
-- read HPAs
-- patch HPAs
-- restore previous HPA values after rule expiration or disablement
+## Scaling Rules Agent RBAC scope
 
-## Recommended approach
+The current chart grants the Scaling Rules Agent:
 
-Install the official chart and keep the provided RBAC manifests aligned with the chart version. Avoid hand-editing permissions unless you are intentionally narrowing the resource scope.
+- `get`, `list`, `watch` on `pods`
+- `get`, `list`, `watch`, `update`, `patch` on `deployments`
+- `get`, `list`, `watch`, `create`, `update`, `patch`, `delete` on `horizontalpodautoscalers`
 
-## Practical validation
+### Why Deployment mutation is required
 
-After installation, confirm that:
+The Scaling Rules Agent may raise or restore Deployment replica counts while applying or reverting an HPA-based scaling window. This keeps the workload aligned with the requested minimum or the stored baseline.
 
-- deployments and namespaces sync correctly
-- node snapshots appear in the frontend
-- CronJobs show schedules and executions
-- scaling templates can be applied and reverted
+## Permission boundaries
+
+- Discovery does not need permission to mutate workloads.
+- Scaling does not need broad inventory permissions beyond the resources involved in HPA execution.
+- The chart is the recommended source of truth for RBAC because the exact permissions are tied to the current supported agent behavior.
+
+## Practical validation after install
+
+After installing the chart, validate both permission sets by confirming that:
+
+- namespaces and Deployments appear in Arguz
+- node snapshots and CronJob executions populate correctly
+- scaling templates can apply and revert without `Forbidden` errors on HPAs or Deployments

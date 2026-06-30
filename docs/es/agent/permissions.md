@@ -1,27 +1,51 @@
 # Permisos requeridos
 
-El chart necesita acceso de lectura para discovery y permisos de actualizacion de HPA cuando el Scaling Rules Agent esta habilitado.
+El chart publico separa los permisos por agente de forma intencional. Discovery es casi solo lectura. Scaling necesita permisos de mutacion para HPAs y para algunos cambios de replicas en Deployments.
 
-## Discovery Agent
+## Alcance RBAC del Discovery Agent
 
-Lectura sobre:
+El chart actual entrega al Discovery Agent:
 
-- Deployments
-- ReplicaSets
-- Pods
-- Jobs
-- CronJobs
-- HPAs
-- Namespaces
-- Services
-- Nodes
-- Ingresses
-- ConfigMaps
+- `get`, `list`, `watch` sobre `namespaces`
+- `get`, `list`, `watch` sobre `nodes`
+- `get`, `list`, `watch` sobre `pods` y `pods/log`
+- `get`, `list`, `watch` sobre `services`
+- `get`, `list`, `watch` sobre `configmaps`
+- `get`, `list`, `watch` sobre `secrets`
+- `get`, `list`, `watch` sobre `events`
+- `get`, `list`, `watch` sobre `deployments` y `replicasets`
+- `get`, `list`, `watch` sobre `horizontalpodautoscalers`
+- `get`, `list`, `watch` sobre `jobs` y `cronjobs`
+- `get`, `list`, `watch` sobre `ingresses` y `networkpolicies`
+- `get`, `list`, `watch` sobre algunos objetos RBAC
+- `get`, `list`, `watch`, `create`, `update`, `patch` sobre `leases` para leader election
 
-## Scaling Rules Agent
+### Por que existe acceso a `pods/log`
 
-Necesita:
+El Discovery Agent lee logs de pods fallidos de Jobs para que Arguz pueda adjuntar contexto de falla al historial de ejecuciones de CronJobs. No archiva logs completos del cluster.
 
-- leer HPAs
-- patch de HPAs
-- restaurar valores previos de HPA
+## Alcance RBAC del Scaling Rules Agent
+
+El chart actual entrega al Scaling Rules Agent:
+
+- `get`, `list`, `watch` sobre `pods`
+- `get`, `list`, `watch`, `update`, `patch` sobre `deployments`
+- `get`, `list`, `watch`, `create`, `update`, `patch`, `delete` sobre `horizontalpodautoscalers`
+
+### Por que necesita mutar Deployments
+
+El Scaling Rules Agent puede subir o restaurar replicas del Deployment mientras aplica o revierte una ventana de scaling basada en HPA. Asi mantiene el workload alineado con el minimo solicitado o con el baseline guardado.
+
+## Limites de permisos
+
+- Discovery no necesita permisos para mutar workloads.
+- Scaling no necesita permisos amplios de inventario mas alla de los recursos involucrados en la ejecucion del HPA.
+- El chart es la fuente de verdad recomendada para RBAC porque los permisos exactos dependen del comportamiento soportado por la version actual de los agentes.
+
+## Validacion practica despues de instalar
+
+Despues de instalar el chart, valida ambos sets de permisos confirmando que:
+
+- namespaces y Deployments aparezcan en Arguz
+- snapshots de nodos y ejecuciones de CronJobs se poblen correctamente
+- los scaling templates puedan aplicar y revertir sin errores `Forbidden` sobre HPAs o Deployments
