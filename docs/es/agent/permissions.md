@@ -1,6 +1,6 @@
 # Permisos requeridos
 
-El chart publico separa los permisos por agente de forma intencional. Discovery es casi solo lectura. Scaling necesita permisos de mutacion para HPAs y para algunos cambios de replicas en Deployments.
+El chart publico separa los permisos por agente de forma intencional. Discovery y Node Agent son de solo lectura desde la perspectiva de la API de Kubernetes. Scaling necesita permisos de mutacion para HPAs y para algunos cambios de replicas en Deployments.
 
 ## Alcance RBAC del Discovery Agent
 
@@ -36,9 +36,21 @@ El chart actual entrega al Scaling Rules Agent:
 
 El Scaling Rules Agent puede subir o restaurar replicas del Deployment mientras aplica o revierte una ventana de scaling basada en HPA. Asi mantiene el workload alineado con el minimo solicitado o con el baseline guardado.
 
+## Alcance RBAC de Node Agent
+
+Node Agent lee contexto de Kubernetes para asociar la telemetria runtime observada desde el host con los workloads. El chart actual le otorga `get` y `list` sobre:
+
+- `pods`, `services` y `endpoints`
+- `endpointslices`
+- `jobs`
+- `replicasets`
+
+Node Agent tambien requiere acceso privilegiado al host para su recoleccion basada en eBPF. Revisa [Node Agent](node-agent.md) para los requisitos completos de acceso al host.
+
 ## Limites de permisos
 
 - Discovery no necesita permisos para mutar workloads.
+- Node Agent no muta recursos de Kubernetes.
 - Scaling no necesita permisos amplios de inventario mas alla de los recursos involucrados en la ejecucion del HPA.
 - El chart es la fuente de verdad recomendada para RBAC porque los permisos exactos dependen del comportamiento soportado por la version actual de los agentes.
 

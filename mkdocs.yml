@@ -106,6 +106,7 @@ nav:
           - agent/index.md
           - Discovery Agent Overview: agent/overview.md
           - Data Collection: agent/data-collection.md
+          - Node Agent: agent/node-agent.md
           - Communication Protocols: agent/protocols.md
           - Required Permissions: agent/permissions.md
           - Security Model: agent/security.md
@@ -149,6 +150,7 @@ nav:
           - es/agent/index.md
           - Resumen del Discovery Agent: es/agent/overview.md
           - Recoleccion de datos: es/agent/data-collection.md
+          - Node Agent: es/agent/node-agent.md
           - Protocolos de comunicacion: es/agent/protocols.md
           - Permisos requeridos: es/agent/permissions.md
           - Modelo de seguridad: es/agent/security.md

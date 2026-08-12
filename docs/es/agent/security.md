@@ -5,7 +5,7 @@ Arguz esta disenado para que el bundle del cluster se mantenga acotado, auditabl
 ## Credenciales del cluster
 
 - El chart guarda `PROJECT_ID`, `CLUSTER_ID` y `CLUSTER_TOKEN` en un Secret compartido.
-- Ambos agentes del bundle reutilizan ese Secret.
+- Todos los agentes del bundle reutilizan ese Secret.
 - Las credenciales autentican al cluster frente a Arguz. No son credenciales de sesion del browser.
 - Los cluster tokens pueden rotarse sin re-registrar el objeto cluster.
 

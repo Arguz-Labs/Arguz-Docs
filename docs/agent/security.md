@@ -5,7 +5,7 @@ Arguz is designed so the cluster-side bundle stays narrow, auditable and separat
 ## Cluster credentials
 
 - The chart stores `PROJECT_ID`, `CLUSTER_ID` and `CLUSTER_TOKEN` in a shared Kubernetes Secret.
-- Both bundled agents reuse that secret.
+- All bundled agents reuse that secret.
 - Cluster credentials authenticate the cluster to Arguz. They are not browser session credentials.
 - Cluster tokens can be rotated without re-registering the cluster object.
 
