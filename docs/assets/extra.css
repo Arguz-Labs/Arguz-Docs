@@ -94,6 +94,12 @@
   white-space: nowrap;
 }
 
+/* Keep the sticky desktop navigation from painting over the page footer. */
+.md-footer {
+  position: relative;
+  z-index: 1;
+}
+
 @media (max-width: 960px) {
   .arguz-hero {
     padding-top: 0.4rem;
